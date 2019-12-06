@@ -1,73 +1,42 @@
 import 'package:flutter/material.dart';
-import 'radio_slider_orientation.dart';
+import 'package:flutter_radio_slider/flutter_radio_slider.dart';
 import 'radio_slider_shape.dart';
 
 class RadioSlider extends StatefulWidget {
-  final int divisions;
-  final bool outerCircle;
   final int value;
-  final RadioSliderOrientation orientation;
-  final ValueChanged<int> onChanged;
-  final Color activeColor;
+  final List<String> labels;
+  final activeColor;
 
-  const RadioSlider({
-    Key key,
-    this.divisions = 1,
-    this.outerCircle = true,
-    this.value = 0,
-    this.orientation = RadioSliderOrientation.Horizontal,
-    @required this.onChanged,
-    this.activeColor,
-  }) : assert(divisions >= 1),
-       assert(value >= 0 && value <= divisions),
-       super(key: key);
+  const RadioSlider({Key key, @required this.value, @required this.labels, this.activeColor}) : super(key: key);
 
   @override
   _RadioSliderState createState() => _RadioSliderState();
 }
 
 class _RadioSliderState extends State<RadioSlider> {
-  num _value;
-
-  @override
-  void initState() {
-    super.initState();
-    _value = widget.value;
-  }
-
-  Widget _buildRadioSlider(BuildContext context) {
-    return SliderTheme(
-      data: SliderTheme.of(context).copyWith(
-        tickMarkShape: RadioSliderTickMarkShape(),
-        thumbShape: RadioSliderThumbShape(
-          activeColor: widget.activeColor,
-          outerCircle: widget.outerCircle,
-        ),
-      ),
-      child: Slider(
-        min: 0,
-        max: widget.divisions.toDouble(),
-        value: _value.toDouble(),
-        divisions: widget.divisions,
-        onChanged: (value) {
-          if (_value != value) {
-            setState(() {
-              _value = value;
-            });
-
-            widget.onChanged(value.toInt());
-          }
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (widget.orientation == RadioSliderOrientation.Vertical) {
-      return RotatedBox(quarterTurns: 1, child: _buildRadioSlider(context));
-    } else {
-      return _buildRadioSlider(context);
-    }
+    final themeData = SliderTheme.of(context).copyWith(
+      trackHeight: 8,
+      activeTrackColor: Colors.grey[300],
+      inactiveTrackColor: Colors.grey[300],
+      inactiveTickMarkColor: Colors.grey[500],
+      tickMarkShape: RadioSliderTickMarkShape(widget.labels, activeColor: widget.activeColor),
+      trackShape: RadioSliderTrackShape(activeColor: widget.activeColor),
+      thumbShape: RadioSliderThumbShape(widget.labels, activeColor: widget.activeColor),
+    );
+
+    return Container(
+      padding: EdgeInsets.only(top: 8, bottom: 16, left: 8, right: 8),
+      child: SliderTheme(
+        data: themeData,
+        child: Slider(
+          min: 0,
+          max: (widget.labels.length - 1).toDouble(),
+          value: widget.value.toDouble(),
+          divisions: widget.labels.length - 1,
+        ),
+      ),
+    );
   }
 }

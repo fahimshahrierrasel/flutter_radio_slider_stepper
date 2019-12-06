@@ -3,56 +3,69 @@ import 'package:flutter_radio_slider/flutter_radio_slider.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  List<String> labels = ["Step 0", "Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6", "Step 7"];
+  int stepValue = 2;
+
   @override
   Widget build(BuildContext context) {
-    final themeData = SliderTheme.of(context).copyWith(
-      trackHeight: 10,
-      overlayColor: Colors.lightGreen.withAlpha(32),
-      activeTickMarkColor: Colors.lightGreen,
-      activeTrackColor: Colors.grey[300],
-      inactiveTrackColor: Colors.grey[300],
-      inactiveTickMarkColor: Colors.grey[500]
-    );
 
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('RadioSlider Example'),
+          title: const Text('RadioSliderStepper Example'),
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text("Horizontal with Divisions - Inner circle only"),
-            SliderTheme(
-              data: themeData,
-              child: RadioSlider(
-                onChanged: (value) {
-                  // Do something
-                },
-                value: 3,
-                divisions: 5,
-                outerCircle: false,
-              ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 20.0),
+              child: Text(labels[stepValue]),
             ),
-            Divider(),
-            Text("Default"),
             RadioSlider(
-              activeColor: Colors.blue,
-              onChanged: (value) { /* no-op */ },
+              value: stepValue,
+              labels: labels,
             ),
-            Divider(),
-            Text("Vertical Orientation"),
-            SliderTheme(
-              data: themeData,
-              child: RadioSlider(
-                orientation: RadioSliderOrientation.Vertical,
-                onChanged: (value) {
-                  print("Value changed: ${value.toString()}");
-                },
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text("Previous Step"),
+                    onPressed: (){
+                      print(stepValue);
+                      if(stepValue > 0) {
+                        setState(() {
+                          stepValue = stepValue - 1;
+                        });
+
+                      }
+                      print(stepValue);
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text("Next Step"),
+                    onPressed: () {
+                      print(stepValue);
+                      if(stepValue < labels.length - 1) {
+                        setState(() {
+                          stepValue = stepValue + 1;
+                        });
+                      }
+                      print(stepValue);
+                    },
+                  )
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),
